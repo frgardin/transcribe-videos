@@ -14,4 +14,4 @@ dependencies = [
 ]
 
 [project.scripts]
-transcribe-yt = "transcribe_yt.cli:app"
+trs = "transcribe_yt.cli:app"
