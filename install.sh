@@ -103,6 +103,12 @@ ok "${CMD_NAME} installed successfully!"
 
 # ── Optional GUI install ───────────────────────────────────────────────────────
 if [[ "${INSTALL_GUI}" == "true" ]]; then
+    if command -v apt-get &>/dev/null; then
+        echo "Installing Qt system libraries..."
+        sudo apt-get install -y libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
+            libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0
+        ok "Qt system libraries installed"
+    fi
     echo "Installing GUI dependencies (PySide6)..."
     pipx inject "${PACKAGE_NAME}" PySide6
     ok "trs-gui installed! Run: trs-gui"
