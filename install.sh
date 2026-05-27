@@ -4,6 +4,7 @@ set -e
 REPO_URL="https://github.com/frgardin/transcribe-videos"
 PACKAGE_NAME="transcribe-yt"
 CMD_NAME="trs"
+INSTALL_GUI=false
 
 GREEN="\033[0;32m"
 YELLOW="\033[1;33m"
@@ -14,17 +15,24 @@ ok()   { echo -e "${GREEN}[✓]${RESET} $*"; }
 warn() { echo -e "${YELLOW}[!]${RESET} $*"; }
 fail() { echo -e "${RED}[✗]${RESET} $*"; exit 1; }
 
-# ── Uninstall mode ────────────────────────────────────────────────────────────
-if [[ "${1}" == "--uninstall" ]]; then
-    echo "Uninstalling ${CMD_NAME}..."
-    if command -v pipx &>/dev/null; then
-        pipx uninstall "${PACKAGE_NAME}"
-        ok "${CMD_NAME} has been uninstalled."
-    else
-        fail "pipx not found — ${CMD_NAME} was likely never installed via this script."
-    fi
-    exit 0
-fi
+# ── Argument parsing ──────────────────────────────────────────────────────────
+for arg in "$@"; do
+    case "$arg" in
+        --uninstall)
+            echo "Uninstalling ${CMD_NAME}..."
+            if command -v pipx &>/dev/null; then
+                pipx uninstall "${PACKAGE_NAME}"
+                ok "${CMD_NAME} has been uninstalled."
+            else
+                fail "pipx not found — ${CMD_NAME} was likely never installed via this script."
+            fi
+            exit 0
+            ;;
+        --gui)
+            INSTALL_GUI=true
+            ;;
+    esac
+done
 
 echo ""
 echo "  trs installer"
@@ -93,6 +101,13 @@ fi
 
 ok "${CMD_NAME} installed successfully!"
 
+# ── Optional GUI install ───────────────────────────────────────────────────────
+if [[ "${INSTALL_GUI}" == "true" ]]; then
+    echo "Installing GUI dependencies (PySide6)..."
+    pipx inject "${PACKAGE_NAME}" PySide6
+    ok "trs-gui installed! Run: trs-gui"
+fi
+
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo ""
 echo "  You can now run:"
@@ -100,6 +115,11 @@ echo ""
 echo "    ${CMD_NAME} --help"
 echo "    ${CMD_NAME} youtube \"<url>\" -o transcript.txt"
 echo "    ${CMD_NAME} file audio.mp3 -o transcript.txt"
+if [[ "${INSTALL_GUI}" == "true" ]]; then
+echo "    trs-gui"
+fi
+echo ""
+echo "  To also install the desktop GUI later: bash install.sh --gui"
 echo ""
 
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then

@@ -1,6 +1,6 @@
 # trs
 
-A CLI tool that transcribes YouTube videos and local audio/video files into text.
+A tool that transcribes YouTube videos and local audio/video files into text. Available as a **CLI** and a **desktop GUI app** (Linux + Windows).
 
 For YouTube videos it tries to fetch the built-in captions first (instant, no model needed). If captions are unavailable it falls back to downloading the audio and running [faster-whisper](https://github.com/SYSTRAN/faster-whisper) locally — no cloud API required. Local files are always transcribed with Whisper directly.
 
@@ -13,7 +13,11 @@ For YouTube videos it tries to fetch the built-in captions first (instant, no mo
 ### One-liner (any Linux machine)
 
 ```bash
+# CLI only
 curl -fsSL https://raw.githubusercontent.com/frgardin/transcribe-videos/main/install.sh | bash
+
+# CLI + desktop GUI
+curl -fsSL https://raw.githubusercontent.com/frgardin/transcribe-videos/main/install.sh | bash -s -- --gui
 ```
 
 ### From a local clone
@@ -21,15 +25,20 @@ curl -fsSL https://raw.githubusercontent.com/frgardin/transcribe-videos/main/ins
 ```bash
 git clone https://github.com/frgardin/transcribe-videos.git
 cd transcribe-videos
-bash install.sh
+bash install.sh          # CLI only
+bash install.sh --gui    # CLI + desktop GUI
 ```
 
 The installer will:
 1. Check for Python 3.10+
 2. Install **pipx** if not present (`apt` on Ubuntu/Debian, `pip --user` on other distros)
-3. Install `trs` into an isolated environment and add it to your `$PATH`
+3. Install `trs` (and optionally `trs-gui`) into an isolated environment and add it to your `$PATH`
 
-Open a new terminal after install (or run `source ~/.bashrc`) if `trs` is not found immediately.
+Open a new terminal after install (or run `source ~/.bashrc`) if the commands are not found immediately.
+
+### Windows
+
+Download the latest `trs-gui.exe` from [GitHub Releases](https://github.com/frgardin/transcribe-videos/releases) — no Python installation required.
 
 ### Uninstall
 
