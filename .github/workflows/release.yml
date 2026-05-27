@@ -38,7 +38,7 @@ jobs:
           files: dist/trs-gui
 
   build-windows:
-    name: Build Windows .exe
+    name: Build Windows installer
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,7 +53,13 @@ jobs:
       - name: Build with PyInstaller
         run: pyinstaller trs-gui.spec
 
-      - name: Upload Windows .exe to release
+      - name: Build Windows installer with Inno Setup
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=$version trs-gui.iss
+        shell: pwsh
+
+      - name: Upload Windows installer to release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/trs-gui.exe
+          files: dist/trs-gui-setup.exe
