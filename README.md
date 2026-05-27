@@ -8,11 +8,38 @@ For YouTube videos it tries to fetch the built-in captions first (instant, no mo
 
 ## Installation
 
-**Requirements:** Python 3.10+
+**Requirements:** Python 3.10+, Linux (Ubuntu/Debian recommended)
+
+### One-liner (any Linux machine)
 
 ```bash
-git clone https://github.com/frgardin/transcribe-yt.git
-cd transcribe-yt
+curl -fsSL https://raw.githubusercontent.com/frgardin/transcribe-videos/main/install.sh | bash
+```
+
+### From a local clone
+
+```bash
+git clone https://github.com/frgardin/transcribe-videos.git
+cd transcribe-videos
+bash install.sh
+```
+
+The installer will:
+1. Check for Python 3.10+
+2. Install **pipx** if not present (`apt` on Ubuntu/Debian, `pip --user` on other distros)
+3. Install `trs` into an isolated environment and add it to your `$PATH`
+
+Open a new terminal after install (or run `source ~/.bashrc`) if `trs` is not found immediately.
+
+### Uninstall
+
+```bash
+bash install.sh --uninstall
+```
+
+### Manual / development install
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e .
