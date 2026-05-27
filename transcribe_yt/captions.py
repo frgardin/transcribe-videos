@@ -1,5 +1,6 @@
 import re
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
+from transcribe_yt.formats import Segment
 
 
 def _extract_video_id(url: str) -> str:
@@ -14,11 +15,19 @@ def _extract_video_id(url: str) -> str:
     raise ValueError(f"Could not extract video ID from URL: {url}")
 
 
-def get_captions(url: str) -> str | None:
+def get_captions(url: str, language: str | None = None) -> list[Segment] | None:
     try:
         video_id = _extract_video_id(url)
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        return " ".join(entry["text"] for entry in transcript)
+        languages = [language] if language else []
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=languages or None)
+        return [
+            Segment(
+                start=entry["start"],
+                end=entry["start"] + entry["duration"],
+                text=entry["text"],
+            )
+            for entry in transcript
+        ]
     except (TranscriptsDisabled, NoTranscriptFound):
         return None
     except Exception:
