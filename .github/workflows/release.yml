@@ -1,0 +1,59 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Build Linux binary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get install -y libgl1 libglib2.0-0 libdbus-1-3 \
+            libxcb-cursor0 libxcb-icccm4 libxcb-image0 \
+            libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
+            libxcb-xinerama0
+
+      - name: Install Python dependencies
+        run: pip install ".[gui]" pyinstaller
+
+      - name: Build with PyInstaller
+        run: pyinstaller trs-gui.spec
+
+      - name: Upload Linux binary to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/trs-gui
+
+  build-windows:
+    name: Build Windows .exe
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: pip install ".[gui]" pyinstaller
+
+      - name: Build with PyInstaller
+        run: pyinstaller trs-gui.spec
+
+      - name: Upload Windows .exe to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/trs-gui.exe
